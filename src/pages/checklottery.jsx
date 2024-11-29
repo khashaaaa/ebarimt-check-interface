@@ -9,15 +9,24 @@ export const CheckLottery = () => {
     const [formKey, setFormKey] = useState(Date.now());
     const { check, checkData, checkError, checkLoading, refreshCheck } = useContext(LotteryCheckContext);
     const { insert, insertData, insertError, insertLoading, refreshInsert } = useContext(LotteryInsertContext);
-    const [emptyWarning, setEmptyWarning] = useState(false)
 
     const toaster = useToaster();
 
-    const message = (
-        <Message showIcon type='success' closable>
-            <Text>Сугалааны дугаар амжилттай нэмэгдлээ</Text>
-        </Message>
-    );
+    const messageInsertSuccess = (msg) => {
+        return (
+            <Message showIcon type='success' closable>
+                <Text>{msg}</Text>
+            </Message>
+        )
+    }
+
+    const messageInsertError = (msg) => {
+        return (
+            <Message showIcon type='error' closable>
+                <Text>{msg}</Text>
+            </Message>
+        )
+    }
 
     const FindBarimt = (values, event) => {
         event.preventDefault();
@@ -41,7 +50,6 @@ export const CheckLottery = () => {
     const InsertLottery = () => {
 
         if (lottery.lottery_number === '') {
-            setEmptyWarning(true)
             return
         }
 
@@ -49,24 +57,20 @@ export const CheckLottery = () => {
             id: checkData.response[0].id,
             lottery_number: lottery.lottery_number,
         });
-
-        refreshCheck()
-        refreshInsert()
     };
 
     useEffect(() => {
         if (insertData && insertData?.status === 200) {
-            toaster.push(message, { placement: 'bottomCenter', duration: 2000 });
+            toaster.push(messageInsertSuccess(insertData?.data.response), { placement: 'bottomCenter', duration: 2000 });
             setFormKey(Date.now());
             setLottery({ id: '', lottery_number: '' });
+            refreshCheck()
+            refreshInsert()
         }
-    }, [insertData]);
-
-    useEffect(() => {
-        if (emptyWarning === true) {
-            setTimeout(() => setEmptyWarning(false), 1000)
+        else if (insertError) {
+            toaster.push(messageInsertError(insertError), { placement: 'bottomCenter', duration: 2000 })
         }
-    }, [emptyWarning])
+    }, [insertData, insertError]);
 
     return (
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gridColumnGap: '1rem' }}>
@@ -125,7 +129,7 @@ export const CheckLottery = () => {
                                 :
                                 <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '1rem' }}>
                                     <Input onChange={e => setLottery({ lottery_number: e })} style={{ marginRight: '1rem', width: '24rem' }} placeholder='Сугалааны дугаар оруулах' />
-                                    <Button appearance='primary' color={emptyWarning ? 'red' : 'blue'} onClick={InsertLottery} loading={insertLoading}>Хадгалах</Button>
+                                    <Button appearance='primary' onClick={InsertLottery} loading={insertLoading}>Хадгалах</Button>
                                 </div>
                         }
                     </List>
