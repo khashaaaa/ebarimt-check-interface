@@ -1,8 +1,3 @@
 export const ServerMonitor = () => {
-
-    return (
-        <div>
-            Monitoring
-        </div>
-    )
+	return <div>Monitoring</div>
 }
