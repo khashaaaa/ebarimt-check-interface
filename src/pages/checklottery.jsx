@@ -58,10 +58,10 @@ export const CheckLottery = () => {
 		const { store_number, transaction_number, amount } = values
 		const newErrors = {}
 
-		if (!store_number) newErrors.store_number = "Энэ талбарыг бөглөнө үү."
+		if (!store_number) newErrors.store_number = "Талбарыг бөглөнө үү."
 		if (!transaction_number)
-			newErrors.transaction_number = "Энэ талбарыг бөглөнө үү."
-		if (!amount) newErrors.amount = "Энэ талбарыг бөглөнө үү."
+			newErrors.transaction_number = "Талбарыг бөглөнө үү."
+		if (!amount) newErrors.amount = "Талбарыг бөглөнө үү."
 
 		if (Object.keys(newErrors).length > 0) {
 			setErrors(newErrors)

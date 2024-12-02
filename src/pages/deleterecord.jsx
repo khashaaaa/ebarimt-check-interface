@@ -97,6 +97,7 @@ export const DeleteRecord = () => {
 				placement: "bottomCenter",
 				duration: 2000,
 			})
+			refreshDelete()
 		} else if (deleteError) {
 			toaster.push(messageDeleteError(deleteError), {
 				placement: "bottomCenter",
@@ -114,23 +115,25 @@ export const DeleteRecord = () => {
 			}}
 		>
 			<Modal open={confirmDelete} onClose={() => setConfirmDelete(false)}>
-				<Modal.Header>Батлах</Modal.Header>
+				<Modal.Header>
+					<Text weight="bold">Батлах</Text>
+				</Modal.Header>
 				<Modal.Body>
-					Та энэ баримтыг устгахдаа итгэлтэй байна уу?
+					<Text weight="bold">
+						Та энэ баримтыг устгахдаа итгэлтэй байна уу?
+					</Text>
 				</Modal.Body>
 				<Modal.Footer>
 					<Button
 						onClick={() =>
 							DeleteBarimt(barimt && barimt.response[0].id)
 						}
+						loading={deleteLoading}
 						appearance="primary"
 					>
 						Тийм
 					</Button>
-					<Button
-						onClick={() => setConfirmDelete(false)}
-						loading={deleteLoading}
-					>
+					<Button onClick={() => setConfirmDelete(false)}>
 						Үгүй
 					</Button>
 				</Modal.Footer>
