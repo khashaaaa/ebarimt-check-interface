@@ -13,7 +13,7 @@ export const BarimtCheckProvider = ({ children }) => {
 
 		try {
 			const response = await axios.post(url, bodyParams)
-			setBarimt(response.data)
+			setBarimt(response)
 		} catch (err) {
 			setBarimtError(err.response.data.response)
 		} finally {
@@ -33,7 +33,7 @@ export const BarimtCheckProvider = ({ children }) => {
 				barimt,
 				barimtError,
 				barimtLoading,
-				refreshBarimt,
+				refreshBarimt
 			}}
 		>
 			{children}

@@ -13,7 +13,7 @@ export const LotteryCheckProvider = ({ children }) => {
 		setCheckError(null)
 		try {
 			const response = await axios.post(url, bodyParams)
-			setCheckData(response.data)
+			setCheckData(response)
 		} catch (err) {
 			setCheckError(err.response.data.response)
 		} finally {

@@ -1,0 +1,35 @@
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=Vollkorn:ital,wght@0,400..900;1,400..900&display=swap");
+
+$primary-color: #19779c;
+$highlight-color: #48b5e0;
+$shadow-color: #557582;
+
+body {
+	font-family: "Manrope", sans-serif;
+	font-weight: 600;
+	background-color: #b9c2c7;
+}
+
+button:not(.rs-btn-close) {
+	min-width: 80px;
+	display: inline-block;
+	color: white;
+	text-transform: lowercase;
+	text-decoration: none;
+	background: linear-gradient(to bottom, $highlight-color, $primary-color);
+	box-shadow: 0 1px 3px $shadow-color;
+	position: relative;
+	overflow: hidden;
+	transition: all 0.3s ease;
+	text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+	font-weight: 600;
+
+	&:active {
+		transform: translateY(2px);
+		box-shadow: 0 1px 2px $shadow-color;
+	}
+}
+
+input {
+	box-shadow: inset 1px 2px 4px rgba(0, 0, 0, 0.2);
+}

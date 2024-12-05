@@ -10,15 +10,13 @@ import {
 	Animation,
 	useToaster,
 	Message,
-	List,
-	Checkbox,
+	List
 } from "rsuite"
 import { LotteryCheckContext } from "../context/lotterycheck"
 import { LotteryInsertContext } from "../context/lotteryinsert"
 
-export const CheckLottery = () => {
-	const [is_organization, set_is_org] = useState(false)
-	const [lottery, setLottery] = useState({ id: "", lottery_number: "" })
+export const LotteryCheck = () => {
+	const [lottery, setLottery] = useState({ id: "", pos_api_lottery: "" })
 	const [errors, setErrors] = useState({})
 	const [formKey, setFormKey] = useState(Date.now())
 	const { check, checkData, checkError, checkLoading, refreshCheck } =
@@ -55,13 +53,12 @@ export const CheckLottery = () => {
 	const FindBarimt = (values, event) => {
 		event.preventDefault()
 
-		const { store_number, transaction_number, amount } = values
+		const { storeid, receiptno, netsale } = values
 		const newErrors = {}
 
-		if (!store_number) newErrors.store_number = "Талбарыг бөглөнө үү."
-		if (!transaction_number)
-			newErrors.transaction_number = "Талбарыг бөглөнө үү."
-		if (!amount) newErrors.amount = "Талбарыг бөглөнө үү."
+		if (!storeid) newErrors.storeid = "Талбарыг бөглөнө үү."
+		if (!receiptno) newErrors.receiptno = "Талбарыг бөглөнө үү."
+		if (!netsale) newErrors.netsale = "Талбарыг бөглөнө үү."
 
 		if (Object.keys(newErrors).length > 0) {
 			setErrors(newErrors)
@@ -69,22 +66,21 @@ export const CheckLottery = () => {
 		}
 
 		setErrors({})
-		check(`${import.meta.env.VITE_API_URL}/lottery/check`, {
-			store_number,
-			transaction_number,
-			amount,
-			is_organization,
+		check(`${import.meta.env.VITE_API_URL}/barimt/lottery/check`, {
+			storeid,
+			receiptno,
+			netsale
 		})
 	}
 
 	const InsertLottery = () => {
-		if (lottery.lottery_number === "") {
+		if (lottery.pos_api_lottery === "") {
 			return
 		}
 
-		insert(`${import.meta.env.VITE_API_URL}/lottery/insert`, {
-			id: checkData.response[0].id,
-			lottery_number: lottery.lottery_number,
+		insert(`${import.meta.env.VITE_API_URL}/barimt/lottery/insert`, {
+			id: checkData.data.response._id,
+			pos_api_lottery: lottery.pos_api_lottery
 		})
 	}
 
@@ -92,8 +88,8 @@ export const CheckLottery = () => {
 		if (checkError) {
 			refreshCheck()
 			toaster.push(messageCheckError(checkError), {
-				placement: "bottomCenter",
-				duration: 2000,
+				placement: "topCenter",
+				duration: 2000
 			})
 		}
 	}, [checkData, checkError])
@@ -101,17 +97,17 @@ export const CheckLottery = () => {
 	useEffect(() => {
 		if (insertData && insertData?.status === 200) {
 			toaster.push(messageInsertSuccess(insertData?.data.response), {
-				placement: "bottomCenter",
-				duration: 2000,
+				placement: "topCenter",
+				duration: 2000
 			})
 			setFormKey(Date.now())
-			setLottery({ id: "", lottery_number: "" })
+			setLottery({ id: "", pos_api_lottery: "" })
 			refreshCheck()
 			refreshInsert()
 		} else if (insertError) {
 			toaster.push(messageInsertError(insertError), {
-				placement: "bottomCenter",
-				duration: 2000,
+				placement: "topCenter",
+				duration: 2000
 			})
 		}
 	}, [insertData, insertError])
@@ -121,7 +117,7 @@ export const CheckLottery = () => {
 			style={{
 				display: "grid",
 				gridTemplateColumns: "1fr 1fr",
-				gridColumnGap: "1rem",
+				gridColumnGap: "1rem"
 			}}
 		>
 			<Panel>
@@ -130,43 +126,34 @@ export const CheckLottery = () => {
 					fluid
 					onSubmit={FindBarimt}
 					formDefaultValue={{
-						store_number: "",
-						transaction_number: "",
-						amount: "",
-						is_organization: false,
+						storeid: "",
+						receiptno: "",
+						netsale: ""
 					}}
 				>
 					<Form.Group controlId="storeNumber">
 						<Form.ControlLabel>Дэлгүүрийн дугаар</Form.ControlLabel>
 						<Form.Control
-							name="store_number"
-							errorMessage={errors.store_number}
+							name="storeid"
+							errorMessage={errors.storeid}
 							errorPlacement="bottomStart"
 						/>
 					</Form.Group>
 					<Form.Group controlId="transactionNumber">
 						<Form.ControlLabel>Гүйлгээний дугаар</Form.ControlLabel>
 						<Form.Control
-							name="transaction_number"
-							errorMessage={errors.transaction_number}
+							name="receiptno"
+							errorMessage={errors.receiptno}
 							errorPlacement="bottomStart"
 						/>
 					</Form.Group>
-					<Form.Group controlId="amount">
+					<Form.Group controlId="netsale">
 						<Form.ControlLabel>Үнийн дүн</Form.ControlLabel>
 						<Form.Control
-							name="amount"
-							errorMessage={errors.amount}
+							name="netsale"
+							errorMessage={errors.netsale}
 							errorPlacement="bottomStart"
 						/>
-					</Form.Group>
-					<Form.Group controlId="isOrganization">
-						<Checkbox
-							value={is_organization}
-							onChange={(check) => set_is_org(!check)}
-						>
-							Байгууллага эсэх
-						</Checkbox>
 					</Form.Group>
 					<Form.Group>
 						<Stack justifyContent="flex-end">
@@ -188,14 +175,15 @@ export const CheckLottery = () => {
 					<List bordered>
 						<List.Item>
 							<Text weight="bold">
-								ID: {checkData ? checkData.response[0].id : ""}
+								ID:{" "}
+								{checkData ? checkData.data.response._id : ""}
 							</Text>
 						</List.Item>
 						<List.Item>
 							<Text weight="bold">
 								Дэлгүүрийн дугаар:{" "}
 								{checkData
-									? checkData.response[0].store_number
+									? checkData.data.response.storeid
 									: ""}
 							</Text>
 						</List.Item>
@@ -203,21 +191,24 @@ export const CheckLottery = () => {
 							<Text weight="bold">
 								Гүйлгээний дугаар:{" "}
 								{checkData
-									? checkData.response[0].transaction_number
+									? checkData.data.response.receiptno
 									: ""}
 							</Text>
 						</List.Item>
 						<List.Item>
 							<Text weight="bold">
 								Үнийн дүн:{" "}
-								{checkData ? checkData.response[0].amount : ""}
+								{checkData
+									? checkData.data.response.netsale
+									: ""}
 							</Text>
 						</List.Item>
-						{checkData && checkData.response[0].lottery_number ? (
+						{checkData &&
+						checkData.data.response.pos_api_lottery ? (
 							<List.Item>
 								<Text weight="bold">
 									Сугалааны дугаар:{" "}
-									{checkData.response[0].lottery_number}
+									{checkData.data.response.pos_api_lottery}
 								</Text>
 							</List.Item>
 						) : (
@@ -225,16 +216,16 @@ export const CheckLottery = () => {
 								style={{
 									display: "flex",
 									justifyContent: "flex-end",
-									padding: "1rem",
+									padding: "1rem"
 								}}
 							>
 								<Input
 									onChange={(e) =>
-										setLottery({ lottery_number: e })
+										setLottery({ pos_api_lottery: e })
 									}
 									style={{
 										marginRight: "1rem",
-										width: "24rem",
+										width: "24rem"
 									}}
 									placeholder="Сугалааны дугаар оруулах"
 								/>

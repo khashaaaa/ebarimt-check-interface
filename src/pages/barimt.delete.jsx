@@ -4,17 +4,18 @@ import {
 	Button,
 	ButtonToolbar,
 	Form,
+	List,
 	Message,
 	Modal,
 	Panel,
 	Stack,
 	Text,
-	useToaster,
+	useToaster
 } from "rsuite"
 import { BarimtCheckContext } from "../context/barimtcheck"
 import { BarimtDeleteContext } from "../context/barimtdelete"
 
-export const DeleteRecord = () => {
+export const BarimtDelete = () => {
 	const [formKey, setFormKey] = useState(Date.now())
 	const [errors, setErrors] = useState({})
 	const { checkBarimt, barimt, barimtError, barimtLoading, refreshBarimt } =
@@ -24,7 +25,7 @@ export const DeleteRecord = () => {
 		deleteResult,
 		deleteError,
 		deleteLoading,
-		refreshDelete,
+		refreshDelete
 	} = useContext(BarimtDeleteContext)
 	const [confirmDelete, setConfirmDelete] = useState(false)
 
@@ -57,11 +58,11 @@ export const DeleteRecord = () => {
 	const FindBarimt = (values, event) => {
 		event.preventDefault()
 
-		const { id, date } = values
+		const { id, salesdate } = values
 		const newErrors = {}
 
 		if (!id) newErrors.id = "Талбарыг бөглөнө үү."
-		if (!date) newErrors.date = "Талбарыг бөглөнө үү."
+		if (!salesdate) newErrors.salesdate = "Талбарыг бөглөнө үү."
 
 		if (Object.keys(newErrors).length > 0) {
 			setErrors(newErrors)
@@ -69,7 +70,10 @@ export const DeleteRecord = () => {
 		}
 
 		setErrors({})
-		checkBarimt(`${import.meta.env.VITE_API_URL}/barimt/find`, { id, date })
+		checkBarimt(`${import.meta.env.VITE_API_URL}/barimt/find`, {
+			id,
+			salesdate
+		})
 	}
 
 	const DeleteBarimt = (id) => {
@@ -78,14 +82,12 @@ export const DeleteRecord = () => {
 	}
 
 	useEffect(() => {
-		if (barimt) {
-			setFormKey(Date.now())
-		}
 		if (barimtError) {
 			refreshBarimt()
+			setFormKey(Date.now())
 			toaster.push(messageCheckError(barimtError), {
-				placement: "bottomCenter",
-				duration: 2000,
+				placement: "topCenter",
+				duration: 2000
 			})
 		}
 	}, [barimt, barimtError])
@@ -93,15 +95,18 @@ export const DeleteRecord = () => {
 	useEffect(() => {
 		if (deleteResult) {
 			refreshBarimt()
+			setFormKey(Date.now())
 			toaster.push(messageDeleteSuccess(deleteResult.response), {
-				placement: "bottomCenter",
-				duration: 2000,
+				placement: "topCenter",
+				duration: 2000
 			})
 			refreshDelete()
 		} else if (deleteError) {
+			refreshBarimt()
+			setFormKey(Date.now())
 			toaster.push(messageDeleteError(deleteError), {
-				placement: "bottomCenter",
-				duration: 2000,
+				placement: "topCenter",
+				duration: 2000
 			})
 		}
 	}, [deleteResult, deleteError])
@@ -111,7 +116,7 @@ export const DeleteRecord = () => {
 			style={{
 				display: "grid",
 				gridTemplateColumns: "1fr 1fr",
-				gridColumnGap: "1rem",
+				gridColumnGap: "1rem"
 			}}
 		>
 			<Modal open={confirmDelete} onClose={() => setConfirmDelete(false)}>
@@ -126,14 +131,17 @@ export const DeleteRecord = () => {
 				<Modal.Footer>
 					<Button
 						onClick={() =>
-							DeleteBarimt(barimt && barimt.response[0].id)
+							DeleteBarimt(barimt && barimt.data.response._id)
 						}
 						loading={deleteLoading}
 						appearance="primary"
 					>
 						Тийм
 					</Button>
-					<Button onClick={() => setConfirmDelete(false)}>
+					<Button
+						appearance="primary"
+						onClick={() => setConfirmDelete(false)}
+					>
 						Үгүй
 					</Button>
 				</Modal.Footer>
@@ -145,7 +153,7 @@ export const DeleteRecord = () => {
 					onSubmit={FindBarimt}
 					formDefaultValue={{
 						id: "",
-						date: "",
+						salesdate: ""
 					}}
 				>
 					<Form.Group controlId="id">
@@ -156,11 +164,13 @@ export const DeleteRecord = () => {
 							errorPlacement="bottomStart"
 						/>
 					</Form.Group>
-					<Form.Group controlId="date">
-						<Form.ControlLabel>Мэдээлэл</Form.ControlLabel>
+					<Form.Group controlId="salesdate">
+						<Form.ControlLabel>
+							Борлуулалтын огноо
+						</Form.ControlLabel>
 						<Form.Control
-							name="date"
-							errorMessage={errors.date}
+							name="salesdate"
+							errorMessage={errors.salesdate}
 							errorPlacement="bottomStart"
 						/>
 					</Form.Group>
@@ -181,18 +191,23 @@ export const DeleteRecord = () => {
 			</Panel>
 			<Animation.Collapse in={barimt && !deleteResult ? true : false}>
 				<Panel>
-					<Text weight="bold">
-						ID: {barimt ? barimt.response[0].id : ""}
-					</Text>
-					<Text weight="bold">
-						date: {barimt ? barimt.response[0].date : ""}
-					</Text>
-					<div
-						style={{
-							display: "flex",
-							justifyContent: "flex-end",
-							marginTop: "1rem",
-						}}
+					<List bordered>
+						<List.Item>
+							<Text weight="bold">
+								Айди: {barimt ? barimt.data.response._id : ""}
+							</Text>
+						</List.Item>
+						<List.Item>
+							<Text weight="bold">
+								Борлуулалтын огноо:{" "}
+								{barimt ? barimt.data.response.salesdate : ""}
+							</Text>
+						</List.Item>
+					</List>
+
+					<Stack
+						justifyContent="flex-end"
+						style={{ marginTop: "1rem" }}
 					>
 						<Button
 							onClick={() => setConfirmDelete(true)}
@@ -201,7 +216,7 @@ export const DeleteRecord = () => {
 						>
 							Устгах
 						</Button>
-					</div>
+					</Stack>
 				</Panel>
 			</Animation.Collapse>
 		</div>
