@@ -18,6 +18,7 @@ import { BarimtFind } from "./pages/barimt.find.jsx"
 import { BarimtDelete } from "./pages/barimt.delete.jsx"
 import "rsuite/dist/rsuite.min.css"
 import "./style.scss"
+import { BarimtSearchProvider } from "./context/barimtsearch.jsx"
 
 createRoot(document.getElementById("root")).render(
 	<StrictMode>
@@ -25,45 +26,55 @@ createRoot(document.getElementById("root")).render(
 			<LotteryInsertProvider>
 				<BarimtCombineProvider>
 					<BarimtCheckProvider>
-						<BarimtDeleteProvider>
-							<OrgCheckProvider>
-								<BranchCheckProvider>
-									<Router>
-										<Routes>
-											<Route
-												path="/"
-												element={<LayoutOne />}
-											>
+						<BarimtSearchProvider>
+							<BarimtDeleteProvider>
+								<OrgCheckProvider>
+									<BranchCheckProvider>
+										<Router>
+											<Routes>
 												<Route
-													index
-													element={<LotteryCheck />}
-												/>
-												<Route
-													path="/refill-document"
-													element={<BarimtRefill />}
-												/>
-												<Route
-													path="/find-document"
-													element={<BarimtFind />}
-												/>
-												<Route
-													path="/delete-document"
-													element={<BarimtDelete />}
-												/>
-												<Route
-													path="/check-organization"
-													element={<OrgCheck />}
-												/>
-												<Route
-													path="/check-branch"
-													element={<BranchCheck />}
-												/>
-											</Route>
-										</Routes>
-									</Router>
-								</BranchCheckProvider>
-							</OrgCheckProvider>
-						</BarimtDeleteProvider>
+													path="/"
+													element={<LayoutOne />}
+												>
+													<Route
+														index
+														element={
+															<LotteryCheck />
+														}
+													/>
+													<Route
+														path="/refill-document"
+														element={
+															<BarimtRefill />
+														}
+													/>
+													<Route
+														path="/find-document"
+														element={<BarimtFind />}
+													/>
+													<Route
+														path="/delete-document"
+														element={
+															<BarimtDelete />
+														}
+													/>
+													<Route
+														path="/check-organization"
+														element={<OrgCheck />}
+													/>
+													<Route
+														path="/check-branch"
+														element={
+															<BranchCheck />
+														}
+													/>
+												</Route>
+											</Routes>
+										</Router>
+									</BranchCheckProvider>
+								</OrgCheckProvider>
+							</BarimtDeleteProvider>
+						</BarimtSearchProvider>
 					</BarimtCheckProvider>
 				</BarimtCombineProvider>
 			</LotteryInsertProvider>
