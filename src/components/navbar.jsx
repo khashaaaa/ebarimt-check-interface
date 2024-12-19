@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
-import { Nav, Sidenav, Text } from "rsuite"
+import { Heading, Nav, Sidenav, Text } from "rsuite"
 import QrcodeIcon from "@rsuite/icons/Qrcode"
 import ReviewIcon from "@rsuite/icons/Review"
+import CharacterAuthorizeIcon from "@rsuite/icons/CharacterAuthorize"
 
 export const Navigator = () => {
 	const [active, setActive] = useState(null)
@@ -14,20 +15,26 @@ export const Navigator = () => {
 			case "/":
 				setActive("1-1")
 				break
-			case "/refill-document":
+			case "/document/refill":
 				setActive("1-2")
 				break
-			case "/find-document":
+			case "/document/find":
 				setActive("1-3")
 				break
-			case "/delete-document":
+			case "/document/delete":
 				setActive("1-4")
 				break
-			case "/check-organization":
+			case "/organization/check":
 				setActive("2-1")
 				break
-			case "/check-branch":
+			case "/branch/check":
 				setActive("2-2")
+				break
+			case "/management/user/create":
+				setActive("3-1")
+				break
+			case "/management/access/create":
+				setActive("3-2")
 				break
 			default:
 				setActive(null)
@@ -42,7 +49,7 @@ export const Navigator = () => {
 			}}
 		>
 			<Sidenav
-				defaultOpenKeys={["1", "2"]}
+				defaultOpenKeys={["1", "2", "3"]}
 				appearance="subtle"
 				style={{
 					borderRadius: "13px 0 0 13px",
@@ -53,7 +60,7 @@ export const Navigator = () => {
 					<Nav onSelect={setActive} activeKey={active}>
 						<Nav.Menu
 							eventKey="1"
-							title="Баримт"
+							title={<Heading level={6}>Баримт</Heading>}
 							icon={<QrcodeIcon />}
 						>
 							<Nav.Item
@@ -66,39 +73,61 @@ export const Navigator = () => {
 							</Nav.Item>
 							<Nav.Item
 								eventKey="1-2"
-								onClick={() => navigate("/refill-document")}
+								onClick={() => navigate("/document/refill")}
 							>
 								<Text weight="bold">Баримт шивэх</Text>
 							</Nav.Item>
 							<Nav.Item
 								eventKey="1-3"
-								onClick={() => navigate("/find-document")}
+								onClick={() => navigate("/document/find")}
 							>
 								<Text weight="bold">Баримт хайх</Text>
 							</Nav.Item>
 							<Nav.Item
 								eventKey="1-4"
-								onClick={() => navigate("/delete-document")}
+								onClick={() => navigate("/document/delete")}
 							>
 								<Text weight="bold">Баримт устгах</Text>
 							</Nav.Item>
 						</Nav.Menu>
 						<Nav.Menu
 							eventKey="2"
-							title="Байгууллага"
+							title={<Heading level={6}>Байгууллага</Heading>}
 							icon={<ReviewIcon />}
 						>
 							<Nav.Item
 								eventKey="2-1"
-								onClick={() => navigate("/check-organization")}
+								onClick={() => navigate("/organization/check")}
 							>
 								<Text weight="bold">Байгууллага шалгах</Text>
 							</Nav.Item>
 							<Nav.Item
 								eventKey="2-2"
-								onClick={() => navigate("/check-branch")}
+								onClick={() => navigate("/branch/check")}
 							>
 								<Text weight="bold">Салбар шалгах</Text>
+							</Nav.Item>
+						</Nav.Menu>
+						<Nav.Menu
+							eventKey="3"
+							title={<Heading level={6}>Удирдлага</Heading>}
+							icon={<CharacterAuthorizeIcon />}
+						>
+							<Nav.Item
+								eventKey="3-1"
+								onClick={() =>
+									navigate("/management/user/create")
+								}
+							>
+								<Text weight="bold">Хэрэглэгч</Text>
+							</Nav.Item>
+							<Nav.Item
+								eventKey="3-2"
+								onClick={() =>
+									navigate("/management/access/create")
+								}
+							>
+								<Text weight="bold">Эрх тохируулах</Text>
 							</Nav.Item>
 						</Nav.Menu>
 					</Nav>

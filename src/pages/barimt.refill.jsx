@@ -69,35 +69,43 @@ export const BarimtRefill = () => {
 	}, [response, responseError])
 
 	return (
-		<Panel>
-			<Form
-				key={formKey}
-				fluid
-				onSubmit={Proceed}
-				formDefaultValue={{
-					receiptno: ""
-				}}
-			>
-				<Form.Group controlId="receiptno">
-					<Form.ControlLabel>Гүйлгээний дугаар</Form.ControlLabel>
-					<FormControl
-						name="receiptno"
-						errorMessage={errors.receiptno}
-						errorPlacement="bottomStart"
-					/>
-				</Form.Group>
-				<Form.Group>
-					<Stack justifyContent="flex-end">
-						<Button
-							type="submit"
-							appearance="primary"
-							loading={responseLoading}
-						>
-							Нэмэх
-						</Button>
-					</Stack>
-				</Form.Group>
-			</Form>
-		</Panel>
+		<div
+			style={{
+				display: "grid",
+				gridTemplateColumns: "1fr 1fr",
+				gridColumnGap: "1rem"
+			}}
+		>
+			<Panel>
+				<Form
+					key={formKey}
+					fluid
+					onSubmit={Proceed}
+					formDefaultValue={{
+						receiptno: ""
+					}}
+				>
+					<Form.Group controlId="receiptno">
+						<Form.ControlLabel>Гүйлгээний дугаар</Form.ControlLabel>
+						<FormControl
+							name="receiptno"
+							errorMessage={errors.receiptno}
+							errorPlacement="bottomStart"
+						/>
+					</Form.Group>
+					<Form.Group>
+						<Stack justifyContent="flex-end">
+							<Button
+								type="submit"
+								appearance="primary"
+								loading={responseLoading}
+							>
+								Нэмэх
+							</Button>
+						</Stack>
+					</Form.Group>
+				</Form>
+			</Panel>
+		</div>
 	)
 }
