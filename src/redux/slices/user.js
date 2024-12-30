@@ -5,9 +5,15 @@ export const createUser = createAsyncThunk(
 	"user/create",
 	async (formData, { rejectWithValue }) => {
 		try {
+			const token = localStorage.getItem("ebarimt_user_token")
 			const response = await axios.post(
 				`${import.meta.env.VITE_API_URL}/user/create`,
-				formData
+				formData,
+				{
+					headers: {
+						Authorization: `Bearer ${token}`
+					}
+				}
 			)
 			return response.data
 		} catch (error) {
@@ -22,8 +28,14 @@ export const fetchUsers = createAsyncThunk(
 	"user/list",
 	async (_, { rejectWithValue }) => {
 		try {
+			const token = localStorage.getItem("ebarimt_user_token")
 			const response = await axios.get(
-				`${import.meta.env.VITE_API_URL}/user/list`
+				`${import.meta.env.VITE_API_URL}/user/list`,
+				{
+					headers: {
+						Authorization: `Bearer ${token}`
+					}
+				}
 			)
 			return response.data
 		} catch (error) {
@@ -38,10 +50,15 @@ export const deleteUser = createAsyncThunk(
 	"user/delete",
 	async (id, { rejectWithValue }) => {
 		try {
+			const token = localStorage.getItem("ebarimt_user_token")
 			const response = await axios.delete(
-				`${import.meta.env.VITE_API_URL}/user/delete/${id}`
+				`${import.meta.env.VITE_API_URL}/user/delete/${id}`,
+				{
+					headers: {
+						Authorization: `Bearer ${token}`
+					}
+				}
 			)
-			console.log(id)
 			return { id, message: response.data.response }
 		} catch (error) {
 			return rejectWithValue(

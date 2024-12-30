@@ -1,24 +1,50 @@
-import axios from "axios"
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { useDispatch, useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
-import { Button, Form, Heading, Panel, Stack } from "rsuite"
+import {
+	Button,
+	Form,
+	Heading,
+	Message,
+	Panel,
+	Stack,
+	Text,
+	useToaster
+} from "rsuite"
+import { loginProceed } from "../redux/slices/login"
 
 export const Login = () => {
 	const [formKey, setFormKey] = useState(Date.now())
 	const [errors, setErrors] = useState({})
-	const [loading, setLoading] = useState(false)
-
+	const dispatch = useDispatch()
 	const navigate = useNavigate()
+	const toaster = useToaster()
+	const { authenticated, loading, errorMsg } = useSelector(
+		(state) => state.loginSlice
+	)
 
-	const Proceed = async (values, event) => {
+	useEffect(() => {
+		if (authenticated) {
+			navigate("/")
+		}
+	}, [authenticated])
+
+	const messageError = (msg) => {
+		return (
+			<Message showIcon type="error" closable>
+				<Text>{msg}</Text>
+			</Message>
+		)
+	}
+
+	const Proceed = (values, event) => {
 		event.preventDefault()
-		setLoading(true)
 
 		const { email, password } = values
 		const newErrors = {}
 
-		if (!email) newErrors.email = "Имэйл бөглөнө үү."
-		if (!password) newErrors.password = "Нууц үг бөглөнө үү."
+		if (!email?.trim()) newErrors.email = "Имэйл бөглөнө үү."
+		if (!password?.trim()) newErrors.password = "Нууц үг бөглөнө үү."
 
 		if (Object.keys(newErrors).length > 0) {
 			setErrors(newErrors)
@@ -26,18 +52,18 @@ export const Login = () => {
 		}
 
 		setErrors({})
-
-		const response = await axios.post(
-			`${import.meta.env.VITE_API_URL}/user/login`,
-			values
-		)
-
+		dispatch(loginProceed({ email, password }))
 		setFormKey(Date.now())
-
-		localStorage.setItem("ebarimt_user_token", response.data.token)
-		setLoading(false)
-		return navigate("/")
 	}
+
+	useEffect(() => {
+		if (errorMsg) {
+			toaster.push(messageError(errorMsg), {
+				placement: "bottomCenter",
+				duration: 2000
+			})
+		}
+	}, [errorMsg])
 
 	return (
 		<div

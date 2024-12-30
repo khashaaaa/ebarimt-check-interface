@@ -1,10 +1,14 @@
 import { configureStore } from "@reduxjs/toolkit"
-import accessCreate from "./slices/access"
-import userCreate from "./slices/user"
+import accessSlice from "./slices/access"
+import userSlice from "./slices/user"
+import loginSlice from "./slices/login"
+import decodeSlice from "./slices/decode"
 
 export const store = configureStore({
 	reducer: {
-		accessCreate,
-		userCreate
+		accessSlice,
+		userSlice,
+		loginSlice,
+		decodeSlice
 	}
 })

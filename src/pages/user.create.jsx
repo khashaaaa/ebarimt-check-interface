@@ -24,7 +24,7 @@ export const UserCreate = () => {
 	const [errors, setErrors] = useState({})
 	const dispatch = useDispatch()
 	const { users, loading, success, successMessage } = useSelector(
-		(state) => state.userCreate
+		(state) => state.userSlice
 	)
 
 	const toaster = useToaster()

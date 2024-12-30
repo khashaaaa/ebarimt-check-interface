@@ -42,9 +42,9 @@ export const AccessCreate = () => {
 	const [errors, setErrors] = useState({})
 	const dispatch = useDispatch()
 	const { data, loading, success, successMessage } = useSelector(
-		(state) => state.accessCreate
+		(state) => state.accessSlice
 	)
-	const { users } = useSelector((state) => state.userCreate)
+	const { users } = useSelector((state) => state.userSlice)
 
 	const toaster = useToaster()
 

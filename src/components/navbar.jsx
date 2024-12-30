@@ -1,45 +1,135 @@
 import { useEffect, useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
-import { Heading, Nav, Sidenav, Text } from "rsuite"
+import { useDispatch, useSelector } from "react-redux"
+import { logout } from "../redux/slices/login"
+import { decodeToken } from "../redux/slices/decode"
+import { Avatar, Button, Heading, Nav, Sidenav, Text } from "rsuite"
+import CharacterAuthorizeIcon from "@rsuite/icons/CharacterAuthorize"
 import QrcodeIcon from "@rsuite/icons/Qrcode"
 import ReviewIcon from "@rsuite/icons/Review"
-import CharacterAuthorizeIcon from "@rsuite/icons/CharacterAuthorize"
+import OffRoundIcon from "@rsuite/icons/OffRound"
+
+const NAV_ITEMS = [
+	{
+		key: "1",
+		title: "Баримт",
+		icon: <QrcodeIcon />,
+		children: [
+			{
+				key: "1-1",
+				path: "/",
+				label: "Сугалааны дугаар нэмэх",
+				accessKey: "barimt/lottery"
+			},
+			{
+				key: "1-2",
+				path: "/document/refill",
+				label: "Баримт шивэх",
+				accessKey: "barimt/type"
+			},
+			{
+				key: "1-3",
+				path: "/document/find",
+				label: "Баримт хайх",
+				accessKey: "barimt/find"
+			},
+			{
+				key: "1-4",
+				path: "/document/delete",
+				label: "Баримт устгах",
+				accessKey: "barimt/delete"
+			}
+		]
+	},
+	{
+		key: "2",
+		title: "Байгууллага",
+		icon: <ReviewIcon />,
+		children: [
+			{
+				key: "2-1",
+				path: "/organization/check",
+				label: "Байгууллага шалгах",
+				accessKey: "org/find"
+			},
+			{
+				key: "2-2",
+				path: "/branch/check",
+				label: "Салбар шалгах",
+				accessKey: "org/branch/find"
+			}
+		]
+	},
+	{
+		key: "3",
+		title: "Удирдлага",
+		icon: <CharacterAuthorizeIcon />,
+		children: [
+			{
+				key: "3-1",
+				path: "/management/user/create",
+				label: "Хэрэглэгч",
+				requiresModifier: true
+			},
+			{
+				key: "3-2",
+				path: "/management/access/create",
+				label: "Эрх тохируулах",
+				requiresModifier: true
+			}
+		]
+	}
+]
 
 export const Navigator = () => {
 	const [active, setActive] = useState(null)
 	const location = useLocation()
 	const navigate = useNavigate()
+	const dispatch = useDispatch()
+
+	const { user } = useSelector((state) => state.decodeSlice)
+
+	const handleLogout = () => {
+		dispatch(logout())
+		navigate("/login")
+	}
 
 	useEffect(() => {
-		switch (location.pathname) {
-			case "/":
-				setActive("1-1")
-				break
-			case "/document/refill":
-				setActive("1-2")
-				break
-			case "/document/find":
-				setActive("1-3")
-				break
-			case "/document/delete":
-				setActive("1-4")
-				break
-			case "/organization/check":
-				setActive("2-1")
-				break
-			case "/branch/check":
-				setActive("2-2")
-				break
-			case "/management/user/create":
-				setActive("3-1")
-				break
-			case "/management/access/create":
-				setActive("3-2")
-				break
-			default:
-				setActive(null)
-		}
+		dispatch(decodeToken())
+	}, [dispatch])
+
+	useEffect(() => {
+		const match = NAV_ITEMS.flatMap((menu) =>
+			menu.children.map((child) => ({ path: child.path, key: child.key }))
+		).find((item) => item.path === location.pathname)
+		setActive(match?.key || null)
 	}, [location.pathname])
+
+	const renderNavItem = ({ key, path, label, accessKey }) => {
+		const isModifier = user?.access?.type_const === "MODIFIER"
+		const hasAccess =
+			isModifier ||
+			(accessKey && user?.access?.path_url?.includes(accessKey))
+
+		if (!hasAccess) return null
+
+		return (
+			<Nav.Item key={key} eventKey={key} onClick={() => navigate(path)}>
+				<Text weight="bold">{label}</Text>
+			</Nav.Item>
+		)
+	}
+
+	const renderMenu = ({ key, title, icon, children }) => (
+		<Nav.Menu
+			key={key}
+			eventKey={key}
+			title={<Heading level={6}>{title}</Heading>}
+			icon={icon}
+		>
+			{children.map(renderNavItem)}
+		</Nav.Menu>
+	)
 
 	return (
 		<div
@@ -48,8 +138,25 @@ export const Navigator = () => {
 				borderRadius: "13px 0 0 13px"
 			}}
 		>
+			<div
+				style={{
+					display: "flex",
+					justifyContent: "space-between",
+					alignItems: "center",
+					padding: "1rem"
+				}}
+			>
+				<Avatar size="sm" />
+				<Button
+					onClick={handleLogout}
+					endIcon={<OffRoundIcon />}
+					size="sm"
+				>
+					Гарах
+				</Button>
+			</div>
 			<Sidenav
-				defaultOpenKeys={["1", "2", "3"]}
+				defaultOpenKeys={NAV_ITEMS.map((item) => item.key)}
 				appearance="subtle"
 				style={{
 					borderRadius: "13px 0 0 13px",
@@ -58,78 +165,7 @@ export const Navigator = () => {
 			>
 				<Sidenav.Body>
 					<Nav onSelect={setActive} activeKey={active}>
-						<Nav.Menu
-							eventKey="1"
-							title={<Heading level={6}>Баримт</Heading>}
-							icon={<QrcodeIcon />}
-						>
-							<Nav.Item
-								eventKey="1-1"
-								onClick={() => navigate("/")}
-							>
-								<Text weight="bold">
-									Сугалааны дугаар нэмэх
-								</Text>
-							</Nav.Item>
-							<Nav.Item
-								eventKey="1-2"
-								onClick={() => navigate("/document/refill")}
-							>
-								<Text weight="bold">Баримт шивэх</Text>
-							</Nav.Item>
-							<Nav.Item
-								eventKey="1-3"
-								onClick={() => navigate("/document/find")}
-							>
-								<Text weight="bold">Баримт хайх</Text>
-							</Nav.Item>
-							<Nav.Item
-								eventKey="1-4"
-								onClick={() => navigate("/document/delete")}
-							>
-								<Text weight="bold">Баримт устгах</Text>
-							</Nav.Item>
-						</Nav.Menu>
-						<Nav.Menu
-							eventKey="2"
-							title={<Heading level={6}>Байгууллага</Heading>}
-							icon={<ReviewIcon />}
-						>
-							<Nav.Item
-								eventKey="2-1"
-								onClick={() => navigate("/organization/check")}
-							>
-								<Text weight="bold">Байгууллага шалгах</Text>
-							</Nav.Item>
-							<Nav.Item
-								eventKey="2-2"
-								onClick={() => navigate("/branch/check")}
-							>
-								<Text weight="bold">Салбар шалгах</Text>
-							</Nav.Item>
-						</Nav.Menu>
-						<Nav.Menu
-							eventKey="3"
-							title={<Heading level={6}>Удирдлага</Heading>}
-							icon={<CharacterAuthorizeIcon />}
-						>
-							<Nav.Item
-								eventKey="3-1"
-								onClick={() =>
-									navigate("/management/user/create")
-								}
-							>
-								<Text weight="bold">Хэрэглэгч</Text>
-							</Nav.Item>
-							<Nav.Item
-								eventKey="3-2"
-								onClick={() =>
-									navigate("/management/access/create")
-								}
-							>
-								<Text weight="bold">Эрх тохируулах</Text>
-							</Nav.Item>
-						</Nav.Menu>
+						{NAV_ITEMS.map(renderMenu)}
 					</Nav>
 				</Sidenav.Body>
 			</Sidenav>
