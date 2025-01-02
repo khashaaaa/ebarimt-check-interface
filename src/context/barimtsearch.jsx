@@ -12,7 +12,16 @@ export const BarimtSearchProvider = ({ children }) => {
 		setResultLoading(true)
 
 		try {
-			const response = await axios.post(url, { receiptno: param })
+			const token = localStorage.getItem("ebarimt_user_token")
+			const response = await axios.post(
+				url,
+				{ receiptno: param },
+				{
+					headers: {
+						Authorization: `Bearer ${token}`
+					}
+				}
+			)
 			setResult(response.data)
 		} catch (err) {
 			setResultError(err.response.data.response)

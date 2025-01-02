@@ -12,7 +12,16 @@ export const OrgCheckProvider = ({ children }) => {
 		setOrgLoading(true)
 
 		try {
-			const response = await axios.post(url, { regNo: params })
+			const token = localStorage.getItem("ebarimt_user_token")
+			const response = await axios.post(
+				url,
+				{ regNo: params },
+				{
+					headers: {
+						Authorization: `Bearer ${token}`
+					}
+				}
+			)
 			setOrgResponse(response)
 		} catch (err) {
 			setOrgError(err.response.data.response)

@@ -12,7 +12,12 @@ export const LotteryInsertProvider = ({ children }) => {
 		setInsertLoading(true)
 		setInsertError(null)
 		try {
-			const response = await axios.post(url, bodyParams)
+			const token = localStorage.getItem("ebarimt_user_token")
+			const response = await axios.post(url, bodyParams, {
+				headers: {
+					Authorization: `Bearer ${token}`
+				}
+			})
 			setInsertData(response)
 		} catch (err) {
 			setInsertError(err.response.data.response)
@@ -33,7 +38,7 @@ export const LotteryInsertProvider = ({ children }) => {
 				insertData,
 				insertError,
 				insertLoading,
-				refreshInsert,
+				refreshInsert
 			}}
 		>
 			{children}

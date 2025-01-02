@@ -22,7 +22,6 @@ import {
 	Message
 } from "rsuite"
 import HelpOutlineIcon from "@rsuite/icons/HelpOutline"
-import EditIcon from "@rsuite/icons/Edit"
 import CloseIcon from "@rsuite/icons/Close"
 
 const HelpTooltip = ({ speaker }) => (
@@ -83,9 +82,8 @@ export const AccessCreate = () => {
 	]
 
 	const typeData = [
-		{ label: "Үзэх", value: "VIEWER" },
-		{ label: "Өөрчлөх", value: "EDITOR" },
-		{ label: "Зохицуулах", value: "MODIFIER" }
+		{ label: "Хэрэглэгч", value: "EDITOR" },
+		{ label: "Админ", value: "MODIFIER" }
 	]
 
 	const tooltips = {
@@ -292,12 +290,6 @@ export const AccessCreate = () => {
 										<Text>{access.type_name}</Text>
 									</Stack>
 									<Stack spacing={10}>
-										<Button
-											appearance="subtle"
-											color="yellow"
-										>
-											<EditIcon />
-										</Button>
 										<Button
 											onClick={() =>
 												dispatch(

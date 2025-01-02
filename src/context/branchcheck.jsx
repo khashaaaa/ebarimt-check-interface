@@ -12,7 +12,16 @@ export const BranchCheckProvider = ({ children }) => {
 		setBranchLoading(true)
 
 		try {
-			const response = await axios.post(url, { bizloc_cd: params })
+			const token = localStorage.getItem("ebarimt_user_token")
+			const response = await axios.post(
+				url,
+				{ bizloc_cd: params },
+				{
+					headers: {
+						Authorization: `Bearer ${token}`
+					}
+				}
+			)
 			setBranchResponse(response)
 		} catch (err) {
 			setBranchError(err.response.data.response)

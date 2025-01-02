@@ -12,7 +12,12 @@ export const BarimtDeleteProvider = ({ children }) => {
 		setDeleteLoading(true)
 
 		try {
-			const response = await axios.delete(url)
+			const token = localStorage.getItem("ebarimt_user_token")
+			const response = await axios.delete(url, {
+				headers: {
+					Authorization: `Bearer ${token}`
+				}
+			})
 			setDeleteResult(response.data)
 		} catch (err) {
 			setDeleteError(err.response.data.response)
@@ -33,7 +38,7 @@ export const BarimtDeleteProvider = ({ children }) => {
 				deleteResult,
 				deleteError,
 				deleteLoading,
-				refreshDelete,
+				refreshDelete
 			}}
 		>
 			{children}

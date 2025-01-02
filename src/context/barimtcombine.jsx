@@ -12,7 +12,12 @@ export const BarimtCombineProvider = ({ children }) => {
 		setResponseLoading(true)
 
 		try {
-			const res = await axios.post(url, param)
+			const token = localStorage.getItem("ebarimt_user_token")
+			const res = await axios.post(url, param, {
+				headers: {
+					Authorization: `Bearer ${token}`
+				}
+			})
 			setResponse(res)
 		} catch (err) {
 			setResponseError(err.response.data.response)

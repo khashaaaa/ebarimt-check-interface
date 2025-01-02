@@ -12,7 +12,12 @@ export const LotteryCheckProvider = ({ children }) => {
 		setCheckLoading(true)
 		setCheckError(null)
 		try {
-			const response = await axios.post(url, bodyParams)
+			const token = localStorage.getItem("ebarimt_user_token")
+			const response = await axios.post(url, bodyParams, {
+				headers: {
+					Authorization: `Bearer ${token}`
+				}
+			})
 			setCheckData(response)
 		} catch (err) {
 			setCheckError(err.response.data.response)

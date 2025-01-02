@@ -105,11 +105,20 @@ export const Navigator = () => {
 		setActive(match?.key || null)
 	}, [location.pathname])
 
-	const renderNavItem = ({ key, path, label, accessKey }) => {
-		const isModifier = user?.access?.type_const === "MODIFIER"
+	const renderNavItem = ({
+		key,
+		path,
+		label,
+		accessKey,
+		requiresModifier
+	}) => {
+		const isModifier = user?.user?.user_type === "MODERATOR"
+
 		const hasAccess =
 			isModifier ||
-			(accessKey && user?.access?.path_url?.includes(accessKey))
+			(requiresModifier && isModifier) ||
+			(accessKey &&
+				user?.access?.some((access) => access.path_url === accessKey))
 
 		if (!hasAccess) return null
 

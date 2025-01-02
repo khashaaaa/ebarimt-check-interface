@@ -14,6 +14,16 @@ import { useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { decodeToken } from "./redux/slices/decode"
 
+const ROUTE_ACCESS = {
+	"/document/refill": "barimt/type",
+	"/document/find": "barimt/find",
+	"/document/delete": "barimt/delete",
+	"/organization/check": "org/find",
+	"/branch/check": "org/branch/find",
+	"/management/access/create": "management/access",
+	"/management/user/create": "management/user"
+}
+
 export const RouterWrap = () => {
 	const dispatch = useDispatch()
 
@@ -22,6 +32,14 @@ export const RouterWrap = () => {
 	}, [dispatch])
 
 	const { user } = useSelector((state) => state.decodeSlice)
+
+	const RestrictedRoute = ({ element, requiredAccess }) => {
+		const hasAccess =
+			user?.user?.user_type === "MODERATOR" ||
+			user?.access?.some((access) => access.path_url === requiredAccess)
+
+		return hasAccess ? element : <Login />
+	}
 
 	return (
 		<Router>
@@ -36,28 +54,89 @@ export const RouterWrap = () => {
 					}
 				>
 					<Route index element={<LotteryCheck />} />
-					<Route path="/document/refill" element={<BarimtRefill />} />
-					<Route path="/document/find" element={<BarimtFind />} />
-					<Route path="/document/delete" element={<BarimtDelete />} />
-					<Route path="/organization/check" element={<OrgCheck />} />
-					<Route path="/branch/check" element={<BranchCheck />} />
-				</Route>
-				{user?.access?.type_const === "MODIFIER" && (
 					<Route
-						path="/management"
+						path="/document/refill"
 						element={
-							<ProtectedRoute>
-								<LayoutOne />
-							</ProtectedRoute>
+							<RestrictedRoute
+								element={<BarimtRefill />}
+								requiredAccess={
+									ROUTE_ACCESS["/document/refill"]
+								}
+							/>
 						}
-					>
-						<Route
-							path="access/create"
-							element={<AccessCreate />}
-						/>
-						<Route path="user/create" element={<UserCreate />} />
-					</Route>
-				)}
+					/>
+					<Route
+						path="/document/find"
+						element={
+							<RestrictedRoute
+								element={<BarimtFind />}
+								requiredAccess={ROUTE_ACCESS["/document/find"]}
+							/>
+						}
+					/>
+					<Route
+						path="/document/delete"
+						element={
+							<RestrictedRoute
+								element={<BarimtDelete />}
+								requiredAccess={
+									ROUTE_ACCESS["/document/delete"]
+								}
+							/>
+						}
+					/>
+					<Route
+						path="/organization/check"
+						element={
+							<RestrictedRoute
+								element={<OrgCheck />}
+								requiredAccess={
+									ROUTE_ACCESS["/organization/check"]
+								}
+							/>
+						}
+					/>
+					<Route
+						path="/branch/check"
+						element={
+							<RestrictedRoute
+								element={<BranchCheck />}
+								requiredAccess={ROUTE_ACCESS["/branch/check"]}
+							/>
+						}
+					/>
+				</Route>
+				<Route
+					path="/management"
+					element={
+						<ProtectedRoute>
+							<LayoutOne />
+						</ProtectedRoute>
+					}
+				>
+					<Route
+						path="access/create"
+						element={
+							<RestrictedRoute
+								element={<AccessCreate />}
+								requiredAccess={
+									ROUTE_ACCESS["/management/access/create"]
+								}
+							/>
+						}
+					/>
+					<Route
+						path="user/create"
+						element={
+							<RestrictedRoute
+								element={<UserCreate />}
+								requiredAccess={
+									ROUTE_ACCESS["/management/user/create"]
+								}
+							/>
+						}
+					/>
+				</Route>
 			</Routes>
 		</Router>
 	)

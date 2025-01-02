@@ -15,6 +15,7 @@ export const loginProceed = createAsyncThunk(
 				`${import.meta.env.VITE_API_URL}/user/login`,
 				payload
 			)
+
 			if (response.data.token) {
 				localStorage.setItem("ebarimt_user_token", response.data.token)
 			}
