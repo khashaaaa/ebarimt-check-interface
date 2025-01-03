@@ -21,6 +21,7 @@ import EditIcon from "@rsuite/icons/Edit"
 import CloseIcon from "@rsuite/icons/Close"
 
 export const UserCreate = () => {
+	const [formKey, setFormKey] = useState(Date.now())
 	const [errors, setErrors] = useState({})
 	const dispatch = useDispatch()
 	const { users, loading, success, successMessage } = useSelector(
@@ -103,6 +104,7 @@ export const UserCreate = () => {
 
 		setErrors({})
 		dispatch(createUser(formValue))
+		setFormKey(Date.now())
 	}
 
 	useEffect(() => {
@@ -143,6 +145,7 @@ export const UserCreate = () => {
 			<Panel>
 				<Form
 					fluid
+					key={formKey}
 					formValue={formValue}
 					onChange={setFormValue}
 					onSubmit={handleSubmit}

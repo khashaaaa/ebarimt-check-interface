@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom"
 import { useDispatch, useSelector } from "react-redux"
 import { logout } from "../redux/slices/login"
 import { decodeToken } from "../redux/slices/decode"
-import { Avatar, Button, Heading, Nav, Sidenav, Text } from "rsuite"
+import { Avatar, Button, Dropdown, Heading, Nav, Sidenav, Text } from "rsuite"
 import CharacterAuthorizeIcon from "@rsuite/icons/CharacterAuthorize"
 import QrcodeIcon from "@rsuite/icons/Qrcode"
 import ReviewIcon from "@rsuite/icons/Review"
@@ -17,7 +17,7 @@ const NAV_ITEMS = [
 		children: [
 			{
 				key: "1-1",
-				path: "/",
+				path: "/document/lottery",
 				label: "Сугалааны дугаар нэмэх",
 				accessKey: "barimt/lottery"
 			},
@@ -140,6 +140,8 @@ export const Navigator = () => {
 		</Nav.Menu>
 	)
 
+	const dropdownRender = (props) => <Avatar {...props} size="sm" />
+
 	return (
 		<div
 			style={{
@@ -155,7 +157,12 @@ export const Navigator = () => {
 					padding: "1rem"
 				}}
 			>
-				<Avatar size="sm" />
+				<Dropdown trigger="hover" renderToggle={dropdownRender}>
+					<Dropdown.Item>
+						{user?.user?.parent_name} {user?.user?.given_name}
+					</Dropdown.Item>
+					<Dropdown.Item>{user?.user?.user_type}</Dropdown.Item>
+				</Dropdown>
 				<Button
 					onClick={handleLogout}
 					endIcon={<OffRoundIcon />}

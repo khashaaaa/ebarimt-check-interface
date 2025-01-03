@@ -13,6 +13,7 @@ import { ProtectedRoute } from "./protectedroute"
 import { useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { decodeToken } from "./redux/slices/decode"
+import { Index } from "./pages"
 
 const ROUTE_ACCESS = {
 	"/document/refill": "barimt/type",
@@ -53,7 +54,11 @@ export const RouterWrap = () => {
 						</ProtectedRoute>
 					}
 				>
-					<Route index element={<LotteryCheck />} />
+					<Route index element={<Index />} />
+					<Route
+						path="/document/lottery"
+						element={<LotteryCheck />}
+					/>
 					<Route
 						path="/document/refill"
 						element={
